@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meal Categories</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+    />
+    <style>
+      /* Your custom styles go here if needed */
+    </style>
+  </head>
+  <body class="font-sans bg-gray-100">
+    <div class="container mx-auto p-8">
+      <h1 class="text-3xl font-semibold mb-4">Meal Categories</h1>
+      <ul id="categories" class="list-none"></ul>
+    </div>
+
+    <div id="categoryDetails" class="hidden container mx-auto p-8">
+      <button class="back-btn mb-4 cursor-pointer">Back to Categories</button>
+      <h2 class="text-2xl font-semibold mb-4" id="categoryTitle"></h2>
+      <div
+        id="mealList"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+      ></div>
+    </div>
+
+    <div id="mealDetail" class="hidden container mx-auto p-8">
+      <button class="back-btn mb-4 cursor-pointer">Back to Meals</button>
+      <h2 class="text-2xl font-semibold mb-4" id="mealDetailTitle"></h2>
+      <div
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        id="mealDetailContent"
+      ></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Fetch categories from the API
+        $.ajax({
+          url: "https://www.themealdb.com/api/json/v1/1/categories.php",
+          method: "GET",
+          success: function (data) {
+            displayCategories(data.categories);
+          },
+          error: function (error) {
+            console.log("Error fetching categories:", error);
+          },
+        });
+
+        // Function to display categories
+        function displayCategories(categories) {
+          var categoriesList = $("#categories");
+          categories.forEach(function (category) {
+            var listItem = $("<li class='mb-2 p-2 bg-white rounded'></li>");
+            var categoryLink = $("<a href='#' class='cursor-pointer'></a>");
+            categoryLink.text(category.strCategory);
+            categoryLink.click(function () {
+              var categoryName = category.strCategory;
+              showCategoryDetails(categoryName);
+            });
+            listItem.append(categoryLink);
+            categoriesList.append(listItem);
+          });
+        }
+
+        // Function to show category details
+        function showCategoryDetails(categoryName) {
+          $("#categoryTitle").text("Meals in Category: " + categoryName);
+          $("#categories").hide();
+          $("#categoryDetails").show();
+
+          // Fetch meals from the API based on the selected category
+          $.ajax({
+            url:
+              "https://www.themealdb.com/api/json/v1/1/filter.php?c=" +
+              encodeURIComponent(categoryName),
+            method: "GET",
+            success: function (data) {
+              displayMeals(data.meals);
+            },
+            error: function (error) {
+              console.log("Error fetching meals:", error);
+            },
+          });
+        }
+
+        // Function to display meals
+        // Function to display meals
+        function displayMeals(meals) {
+          var mealList = $("#mealList");
+          mealList.empty();
+
+          meals.forEach(function (meal) {
+            var mealItem = $(
+              "<div class='p-4 bg-white rounded shadow-md'></div>"
+            );
+            mealItem.append(
+              "<h3 class='text-xl font-semibold mb-2'>" + meal.strMeal + "</h3>"
+            );
+            mealItem.append(
+              "<a href='#' class='meal-link cursor-pointer' data-meal-id='" +
+                meal.idMeal +
+                "'>" +
+                "<img src='" +
+                meal.strMealThumb +
+                "' alt='" +
+                meal.strMeal +
+                "' class='w-full h-40 object-cover mb-2'>" +
+                "</a>"
+            );
+            mealItem.append(
+              "<p class='text-gray-700'>" + meal.strInstructions + "</p>"
+            );
+            mealList.append(mealItem);
+          });
+
+          // Add click event handler for meal links
+          $(".meal-link").click(function () {
+            var mealId = $(this).data("meal-id");
+            showMealDetail(mealId);
+          });
+        }
+
+        // Function to show meal details
+        function showMealDetail(mealId) {
+          // Fetch meal details from the API based on the selected meal
+          $.ajax({
+            url:
+              "https://www.themealdb.com/api/json/v1/1/lookup.php?i=" +
+              encodeURIComponent(mealId),
+            method: "GET",
+            success: function (data) {
+              displayMealDetail(data.meals[0]);
+            },
+            error: function (error) {
+              console.log("Error fetching meal details:", error);
+            },
+          });
+        }
+
+        // Function to display meal details
+        function displayMealDetail(meal) {
+          $("#mealDetailTitle").text("Meal Detail: " + meal.strMeal);
+          $("#mealList").hide();
+          $("#categoryDetails").hide();
+          $("#mealDetailContent").empty();
+
+          // Display meal details
+          var mealDetailContent = $("#mealDetailContent");
+          mealDetailContent.append(
+            "<img src='" +
+              meal.strMealThumb +
+              "' alt='" +
+              meal.strMeal +
+              "' class='w-full h-40 object-cover mb-2'>"
+          );
+          mealDetailContent.append(
+            "<p class='text-gray-700'>" + meal.strInstructions + "</p>"
+          );
+
+          // You can add more details as needed
+
+          // Show the meal detail section
+          $("#mealDetail").show();
+        }
+
+        // Back button click event for category details
+        $("#categoryDetails .back-btn").click(function () {
+          $("#categoryDetails").hide();
+          $("#mealList").show();
+          $("#categories").show();
+        });
+
+        // Back button click event for meal details
+        $("#mealDetail .back-btn").click(function () {
+          $("#mealDetail").hide();
+          $("#mealList").show();
+          $("#categoryDetails").show();
+        });
+      });
+    </script>
+  </body>
+</html>
