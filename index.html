@@ -8,33 +8,53 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
     />
-    <style>
-      /* Your custom styles go here if needed */
-    </style>
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com;"
+    />
   </head>
   <body class="font-sans bg-gray-100">
+    <!-- Navbar -->
+    <nav class="bg-gray-100 p-4 border-b border-gray-300">
+      <div class="container mx-auto">
+        <div class="flex items-center justify-between">
+          <h1 class="text-xl font-semibold">
+            <a href="/index.html" class="">mealapp</a>
+          </h1>
+          <ul class="flex space-x-4">
+            <li><a href="/index.html" class="">Home</a></li>
+            <li><a href="#" class="">Foods</a></li>
+            <li><a href="#" class="">Ingredients</a></li>
+            <li><a href="#" class="">Local Culinary</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- Navbar -->
+
+    <!-- Main Content -->
     <div class="container mx-auto p-8">
-      <h1 class="text-3xl font-semibold mb-4">Meal Categories</h1>
-      <ul id="categories" class="list-none"></ul>
-    </div>
-
-    <div id="categoryDetails" class="hidden container mx-auto p-8">
-      <button class="back-btn mb-4 cursor-pointer">Back to Categories</button>
-      <h2 class="text-2xl font-semibold mb-4" id="categoryTitle"></h2>
       <div
-        id="mealList"
+        id="categories"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
       ></div>
-    </div>
 
-    <div id="mealDetail" class="hidden container mx-auto p-8">
-      <button class="back-btn mb-4 cursor-pointer">Back to Meals</button>
-      <h2 class="text-2xl font-semibold mb-4" id="mealDetailTitle"></h2>
-      <div
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        id="mealDetailContent"
-      ></div>
+      <div id="categoryDetails" class="hidden container mx-auto p-8">
+        <div
+          id="mealList"
+          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+        ></div>
+      </div>
+
+      <div id="mealDetail" class="hidden container mx-auto p-8">
+        <h2 class="text-2xl font-semibold mb-4" id="mealDetailTitle"></h2>
+        <div
+          class="w-full flex flex-col justify-center"
+          id="mealDetailContent"
+        ></div>
+      </div>
     </div>
+    <!-- Main Content -->
 
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
@@ -53,23 +73,37 @@
 
         // Function to display categories
         function displayCategories(categories) {
-          var categoriesList = $("#categories");
+          const categoriesGrid = $("#categories");
           categories.forEach(function (category) {
-            var listItem = $("<li class='mb-2 p-2 bg-white rounded'></li>");
-            var categoryLink = $("<a href='#' class='cursor-pointer'></a>");
-            categoryLink.text(category.strCategory);
-            categoryLink.click(function () {
-              var categoryName = category.strCategory;
+            const categoryItem = $(
+              "<div class='p-4 bg-white rounded shadow-md'></div>"
+            );
+            categoryItem.append(
+              "<h3 class='text-xl font-semibold mb-2'>" +
+                category.strCategory +
+                "</h3>"
+            );
+            categoryItem.append(
+              "<a href='#' class='category-link cursor-pointer' data-category-name='" +
+                category.strCategory +
+                "'>" +
+                "<img src='" +
+                category.strCategoryThumb +
+                "' alt='" +
+                category.strCategory +
+                "' class='w-full h-40 object-cover mb-2'>" +
+                "</a>"
+            );
+            categoryItem.click(function () {
+              const categoryName = category.strCategory;
               showCategoryDetails(categoryName);
             });
-            listItem.append(categoryLink);
-            categoriesList.append(listItem);
+            categoriesGrid.append(categoryItem);
           });
         }
 
         // Function to show category details
         function showCategoryDetails(categoryName) {
-          $("#categoryTitle").text("Meals in Category: " + categoryName);
           $("#categories").hide();
           $("#categoryDetails").show();
 
@@ -89,13 +123,12 @@
         }
 
         // Function to display meals
-        // Function to display meals
         function displayMeals(meals) {
-          var mealList = $("#mealList");
+          const mealList = $("#mealList");
           mealList.empty();
 
           meals.forEach(function (meal) {
-            var mealItem = $(
+            const mealItem = $(
               "<div class='p-4 bg-white rounded shadow-md'></div>"
             );
             mealItem.append(
@@ -112,21 +145,19 @@
                 "' class='w-full h-40 object-cover mb-2'>" +
                 "</a>"
             );
-            mealItem.append(
-              "<p class='text-gray-700'>" + meal.strInstructions + "</p>"
-            );
+
             mealList.append(mealItem);
           });
 
           // Add click event handler for meal links
           $(".meal-link").click(function () {
-            var mealId = $(this).data("meal-id");
+            const mealId = $(this).data("meal-id");
             showMealDetail(mealId);
           });
         }
 
         // Function to show meal details
-        function showMealDetail(mealId) {
+        function showMealDetail(mealId, mealName) {
           // Fetch meal details from the API based on the selected meal
           $.ajax({
             url:
@@ -150,37 +181,52 @@
           $("#mealDetailContent").empty();
 
           // Display meal details
-          var mealDetailContent = $("#mealDetailContent");
+          const mealDetailContent = $("#mealDetailContent");
           mealDetailContent.append(
             "<img src='" +
               meal.strMealThumb +
               "' alt='" +
               meal.strMeal +
-              "' class='w-full h-40 object-cover mb-2'>"
-          );
-          mealDetailContent.append(
-            "<p class='text-gray-700'>" + meal.strInstructions + "</p>"
+              "' class='w-80 h-80 rounded object-cover mb-2'>"
           );
 
-          // You can add more details as needed
+          // Replace "\r\n" in strInstructions with <br/>
+          const instructionsWithBreaks = meal.strInstructions.replace(
+            /\r\n/g,
+            "<br/>"
+          );
+          mealDetailContent.append(
+            "<h2 class='text-gray-700 text-2xl font-semibold'>Instructions</h2>"
+          );
+          mealDetailContent.append(
+            "<p class='text-gray-700'>" + instructionsWithBreaks + "</p>"
+          );
+
+          // Display recipe ingredients
+          mealDetailContent.append(
+            "<h2 class='text-gray-700 mt-4 text-2xl font-semibold'>Recipes</h2>"
+          );
+          mealDetailContent.append("<ul class='text-gray-700 list-disc pl-4'>");
+          for (let i = 1; i <= 20; i++) {
+            const ingredient = meal["strIngredient" + i];
+            const measure = meal["strMeasure" + i];
+            if (ingredient && measure) {
+              mealDetailContent.append(
+                "<li>" + measure + " " + ingredient + "</li>"
+              );
+            }
+          }
+          mealDetailContent.append("</ul>");
+
+          mealDetailContent.append(
+            "<div class='video-container mt-6'><iframe width='420' height='315' src='https://www.youtube-nocookie.com/embed/" +
+              meal.strYoutube.split("v=")[1] +
+              "' frameborder='0' allowfullscreen></iframe></div>"
+          );
 
           // Show the meal detail section
           $("#mealDetail").show();
         }
-
-        // Back button click event for category details
-        $("#categoryDetails .back-btn").click(function () {
-          $("#categoryDetails").hide();
-          $("#mealList").show();
-          $("#categories").show();
-        });
-
-        // Back button click event for meal details
-        $("#mealDetail .back-btn").click(function () {
-          $("#mealDetail").hide();
-          $("#mealList").show();
-          $("#categoryDetails").show();
-        });
       });
     </script>
   </body>
