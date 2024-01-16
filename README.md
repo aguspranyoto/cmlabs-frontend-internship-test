@@ -3,9 +3,10 @@
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#overview">Overview</a></li>
-    <li><a href="#demoproject1">Demo Project HTML, CSS, JS</a></li>
-    <li><a href="#demoproject2">Demo Project Next Js + Typescript</a></li>
+    <li><a href="#demo-project-html-tailwind-js">Demo Project HTML, CSS, JS</a></li>
+    <li><a href="#demo-project-next-js-and-typescript">Demo Project Next Js + Typescript</a></li>
     <li><a href="#instalation">Instalation</a></li>
+    <li><a href="#usage">Usage</a></li>
     <li><a href="#contact">Contact</a></li>
   </ol>
 </details>
@@ -16,7 +17,7 @@ Project ini adalah Pre-assessment Test dari cmlabs untuk posisi Front-end Develo
 
 Sebagai seorang React js developer, saya juga mengerjakan Pre-assessment Test ini menggunakan Next js + Typescript.
 
-## Demo Project HTML, CSS, JS
+## Demo Project HTML, TAILWIND, JS
 
 https://cmlabs-frontend-internship-test-five.vercel.app/
 
@@ -28,7 +29,7 @@ Dibuat menggunakan:
 ![JQUERY][JQUERY]
 ![AJAX][AJAX]
 
-## Demo Project Next Js + Typescript
+## Demo Project Next Js and Typescript
 
 https://cmlabs-frontend-internship-test-next-js.vercel.app/
 
