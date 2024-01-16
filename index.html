@@ -16,18 +16,51 @@
   <body class="font-sans bg-gray-100">
     <!-- Navbar -->
     <nav class="bg-gray-100 p-4 border-b border-gray-300">
-      <div class="container mx-auto">
-        <div class="flex items-center justify-between">
-          <h1 class="text-xl font-semibold">
-            <a href="/index.html" class="">mealapp</a>
-          </h1>
-          <ul class="flex space-x-4">
-            <li><a href="/index.html" class="">Home</a></li>
-            <li><a href="#" class="">Foods</a></li>
-            <li><a href="#" class="">Ingredients</a></li>
-            <li><a href="#" class="">Local Culinary</a></li>
-          </ul>
+      <div class="container mx-auto flex items-center justify-between">
+        <h1 class="text-xl font-semibold">
+          <a href="/index.html" class="">mealapp</a>
+        </h1>
+        <div class="md:hidden">
+          <!-- Mobile menu button for small screens -->
+          <button
+            id="mobileMenuBtn"
+            class="text-gray-800 hover:text-gray-600 focus:outline-none focus:text-gray-600"
+          >
+            <svg
+              class="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              ></path>
+            </svg>
+          </button>
         </div>
+        <ul class="hidden md:flex space-x-4">
+          <li><a href="/index.html" class="">Home</a></li>
+          <li><a href="#" class="">Foods</a></li>
+          <li><a href="#" class="">Ingredients</a></li>
+          <li><a href="#" class="">Local Culinary</a></li>
+        </ul>
+      </div>
+      <!-- Mobile menu for small screens -->
+      <div
+        id="mobileMenu"
+        class="md:hidden absolute top-16 left-0 right-0 bg-gray-100 border-b border-gray-300 p-4"
+        style="display: none"
+      >
+        <ul class="flex flex-col space-y-2">
+          <li><a href="/index.html" class="">Home</a></li>
+          <li><a href="#" class="">Foods</a></li>
+          <li><a href="#" class="">Ingredients</a></li>
+          <li><a href="#" class="">Local Culinary</a></li>
+        </ul>
       </div>
     </nav>
     <!-- Navbar -->
@@ -58,6 +91,10 @@
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
       $(document).ready(function () {
+        // Toggle mobile menu
+        $("#mobileMenuBtn").click(function () {
+          $("#mobileMenu").slideToggle();
+        });
         // Fetch categories from the API
         $.ajax({
           url: "https://www.themealdb.com/api/json/v1/1/categories.php",
@@ -217,8 +254,9 @@
           }
           mealDetailContent.append("</ul>");
 
+          // Display the video with a smaller iframe for mobile
           mealDetailContent.append(
-            "<div class='video-container mt-6'><iframe width='420' height='315' src='https://www.youtube-nocookie.com/embed/" +
+            "<div class='video-container mt-6'><iframe width='100%' height='400' src='https://www.youtube-nocookie.com/embed/" +
               meal.strYoutube.split("v=")[1] +
               "' frameborder='0' allowfullscreen></iframe></div>"
           );
